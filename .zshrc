@@ -80,7 +80,8 @@ alias vim='nvim'
 alias c='clear'
 
 # Shell integrations
-eval "$(fzf --zsh)"
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
 eval "$(zoxide init --cmd cd zsh)"
 
 # Load a few important annexes, without Turbo
@@ -94,3 +95,8 @@ zinit light-mode for \
 ### End of Zinit's installer chunk
 
 export GPG_TTY=$(tty)
+
+# CUDA
+if [[ -d "/usr/local/cuda" ]] then;
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+fi
