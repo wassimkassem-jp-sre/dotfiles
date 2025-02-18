@@ -80,8 +80,9 @@ alias vim='nvim'
 alias c='clear'
 
 # Shell integrations
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-source /usr/share/doc/fzf/examples/completion.zsh
+# Fails on macOS
+# source /usr/share/doc/fzf/examples/key-bindings.zsh
+# source /usr/share/doc/fzf/examples/completion.zsh
 eval "$(zoxide init --cmd cd zsh)"
 
 # Load a few important annexes, without Turbo
