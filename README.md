@@ -30,3 +30,7 @@ stow -d. -t~ --adopt
 - zinit
 - fzf
 - zoxide
+
+## Source
+
+[dreams of autonomy](https://www.youtube.com/watch?v=y6XCebnB9gs&t=308s)
