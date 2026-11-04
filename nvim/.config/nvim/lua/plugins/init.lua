@@ -9,6 +9,18 @@ return {
       vim.g.tmux_navigator_no_mappings = 1
     end,
   },
+  -- <leader>ff also lists dotfiles (.zshrc, .github/, ...). Gitignored files
+  -- and .git/ stay hidden; <leader>fa still shows everything.
+  {
+    "nvim-telescope/telescope.nvim",
+    opts = {
+      pickers = {
+        find_files = {
+          find_command = { "rg", "--files", "--color", "never", "--hidden", "--glob", "!**/.git/*" },
+        },
+      },
+    },
+  },
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save

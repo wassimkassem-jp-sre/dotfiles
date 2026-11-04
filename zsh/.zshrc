@@ -1,4 +1,4 @@
-# ~/.zshrc — managed in ~/dotfiles (zsh package, linked with GNU stow)
+# ~/.zshrc — managed in ~/workspace/dotfiles, macos branch (zsh package, linked with GNU stow)
 
 # Powerlevel10k instant prompt. Keep near the top; anything that needs console
 # input (password prompts, y/n) must go above this block.
@@ -55,6 +55,9 @@ alias vim=nvim
 # `t` attaches to (or creates) a "main" session; `tf` opens the fuzzy session picker.
 alias t='tmux new-session -A -s main'
 alias tf='tmux-sessionizer'
+
+# Open the key cheatsheet (tmux / AeroSpace / nvim)
+alias keys='open ~/workspace/dotfiles/cheatsheet.html'
 
 # ------------------------------------------------------------ local only ----
 # Host shortnames (kept out of the dotfiles repo).

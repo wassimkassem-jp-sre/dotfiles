@@ -12,6 +12,12 @@ map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Window/pane left" })
 map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Window/pane down" })
 map("n", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Window/pane up" })
 map("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Window/pane right" })
+-- Same keys work from inside a terminal window. Inside it, the shell no longer
+-- gets Ctrl-h/j/k/l itself; clear the screen with `clear` or Cmd-k instead.
+map("t", "<C-h>", "<C-\\><C-n><cmd>TmuxNavigateLeft<CR>", { desc = "Window/pane left" })
+map("t", "<C-j>", "<C-\\><C-n><cmd>TmuxNavigateDown<CR>", { desc = "Window/pane down" })
+map("t", "<C-k>", "<C-\\><C-n><cmd>TmuxNavigateUp<CR>", { desc = "Window/pane up" })
+map("t", "<C-l>", "<C-\\><C-n><cmd>TmuxNavigateRight<CR>", { desc = "Window/pane right" })
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 

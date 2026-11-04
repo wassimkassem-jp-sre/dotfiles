@@ -1,6 +1,6 @@
 # dotfiles
 
-macOS dev setup: **AeroSpace** (windows) + **tmux** (sessions/panes) + **nvim** (editor) + **zsh**.
+macOS dev setup (`macos` branch; Linux lives on `linux`): **AeroSpace** (windows) + **tmux** (sessions/panes) + **nvim** (editor) + **zsh**.
 Each top-level directory is a [GNU stow](https://www.gnu.org/software/stow/) package that mirrors `$HOME`.
 
 | Package     | Links to                                   |
@@ -14,9 +14,9 @@ Each top-level directory is a [GNU stow](https://www.gnu.org/software/stow/) pac
 ## Install on a new Mac
 
 ```bash
-git clone <this repo> ~/dotfiles
-brew bundle --file ~/dotfiles/Brewfile
-~/dotfiles/install.sh          # stow every package (target is ~, see .stowrc)
+git clone -b macos git@github.com:wassimkassem-jp-sre/dotfiles.git ~/workspace/dotfiles
+brew bundle --file ~/workspace/dotfiles/Brewfile
+~/workspace/dotfiles/install.sh       # stow every package (target is ~, see .stowrc)
 ```
 
 oh-my-zsh and powerlevel10k are installed separately (see their docs).
@@ -40,6 +40,8 @@ git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
   turn on "Group windows by application".
 
 ## Key map
+
+Printable, searchable version: [`cheatsheet.html`](cheatsheet.html) (run `keys` in a shell to open it).
 
 Modifier ownership: **Option** = AeroSpace, **Ctrl-Space** = tmux prefix, **Space** = nvim leader.
 

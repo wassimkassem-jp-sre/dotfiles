@@ -1,4 +1,4 @@
-# brew bundle --file ~/dotfiles/Brewfile
+# brew bundle --file ~/workspace/dotfiles/Brewfile
 brew "stow"
 brew "tmux"
 brew "neovim"

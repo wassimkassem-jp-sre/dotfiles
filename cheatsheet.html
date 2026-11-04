@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dev Keys Cheatsheet</title>
+<style>
+  /* Catppuccin Latte (light) / Mocha (dark), matching the tmux and NvChad themes */
+  :root {
+    --bg: #eff1f5; --card: #ffffff; --line: #dce0e8; --text: #4c4f69; --muted: #6c6f85;
+    --kbd-bg: #e6e9ef; --kbd-line: #bcc0cc; --kbd-text: #4c4f69;
+    --aero: #8839ef; --tmux: #1e66f5; --nvim: #40a02b; --setup: #df8e1d; --warn: #d20f39;
+    --mark: #fbe3a8;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11111b; --card: #1e1e2e; --line: #313244; --text: #cdd6f4; --muted: #a6adc8;
+      --kbd-bg: #313244; --kbd-line: #45475a; --kbd-text: #cdd6f4;
+      --aero: #cba6f7; --tmux: #89b4fa; --nvim: #a6e3a1; --setup: #f9e2af; --warn: #f38ba8;
+      --mark: #5c4b2a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11111b; --card: #1e1e2e; --line: #313244; --text: #cdd6f4; --muted: #a6adc8;
+    --kbd-bg: #313244; --kbd-line: #45475a; --kbd-text: #cdd6f4;
+    --aero: #cba6f7; --tmux: #89b4fa; --nvim: #a6e3a1; --setup: #f9e2af; --warn: #f38ba8;
+    --mark: #5c4b2a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 18px; }
+  h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+  .owners { display: flex; flex-wrap: wrap; gap: 8px; }
+  .owner {
+    display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: 13px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  input[type="search"] {
+    width: 240px; max-width: 100%; padding: 7px 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--card); color: var(--text); font: inherit;
+  }
+  button {
+    padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); font: inherit; cursor: pointer;
+  }
+
+  .grid { columns: 4 330px; column-gap: 14px; }
+  section {
+    break-inside: avoid; margin: 0 0 14px; background: var(--card);
+    border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 10px;
+    padding: 12px 14px 8px;
+  }
+  section.aero { --accent: var(--aero); }
+  section.tmux { --accent: var(--tmux); }
+  section.nvim { --accent: var(--nvim); }
+  section.setup { --accent: var(--setup); }
+  h2 { font-size: 15px; margin: 0 0 2px; display: flex; align-items: baseline; gap: 8px; }
+  h2 .tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+  .sub { color: var(--muted); font-size: 12.5px; margin: 0 0 6px; }
+  h3 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 10px 0 2px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 3px 0; vertical-align: top; border-top: 1px solid var(--line); }
+  tr:first-child td { border-top: 0; }
+  td.k { white-space: nowrap; padding-right: 10px; width: 1%; }
+  kbd {
+    display: inline-block; min-width: 1.5em; padding: 0 5px; margin: 1px 1px;
+    font: 12px/1.6 ui-monospace, "SF Mono", Menlo, monospace; text-align: center;
+    color: var(--kbd-text); background: var(--kbd-bg);
+    border: 1px solid var(--kbd-line); border-bottom-width: 2px; border-radius: 5px;
+  }
+  .or { color: var(--muted); font-size: 12px; padding: 0 2px; }
+  code { font: 12px ui-monospace, "SF Mono", Menlo, monospace; background: var(--kbd-bg); padding: 1px 4px; border-radius: 4px; word-break: break-all; }
+  .note { color: var(--muted); font-size: 12.5px; }
+  .warn { color: var(--warn); }
+  mark { background: var(--mark); color: inherit; border-radius: 2px; }
+  .hidden { display: none !important; }
+  .empty { text-align: center; color: var(--muted); padding: 30px 0; }
+
+  footer { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    .tools { margin-left: 0; width: 100%; }
+    input[type="search"] { flex: 1; width: auto; }
+    .grid { columns: 1; }
+  }
+  @media print {
+    :root { --bg: #fff; --card: #fff; }
+    body { font-size: 10.5px; }
+    .tools, footer { display: none; }
+    .wrap { padding: 0; max-width: none; }
+    .grid { columns: 3; column-gap: 8px; }
+    section { padding: 6px 8px 4px; margin-bottom: 8px; }
+    kbd { font-size: 9.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Dev keys cheatsheet</h1>
+    <div class="owners" aria-label="Who owns which modifier">
+      <span class="owner"><span class="dot" style="background:var(--aero)"></span><kbd>⌥</kbd> AeroSpace</span>
+      <span class="owner"><span class="dot" style="background:var(--tmux)"></span><kbd>⌃</kbd><kbd>Space</kbd> tmux prefix</span>
+      <span class="owner"><span class="dot" style="background:var(--nvim)"></span><kbd>Space</kbd> nvim leader</span>
+    </div>
+    <div class="tools">
+      <input type="search" id="q" placeholder="Filter… (press /)" aria-label="Filter shortcuts">
+      <button id="theme" type="button" title="Toggle light/dark">◐</button>
+    </div>
+  </header>
+
+  <div class="grid" id="grid">
+
+    <!-- ============================ AeroSpace ============================ -->
+    <section class="aero">
+      <h2><span class="tag">AeroSpace</span> Windows</h2>
+      <p class="sub">Everything uses <kbd>⌥</kbd> Option.</p>
+      <table>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Focus window left / down / up / right</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Move window</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>f</kbd></td><td>Fullscreen toggle</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>f</kbd></td><td>Float ↔ tile this window</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>/</kbd></td><td>Tiles layout (press again: flip horizontal/vertical)</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>,</kbd></td><td>Accordion layout</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>-</kbd> <span class="or">/</span> <kbd>⌥</kbd><kbd>^</kbd></td><td>Shrink / grow (JIS <kbd>^</kbd> = US <kbd>=</kbd>)</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>↩</kbd></td><td>New iTerm window</td></tr>
+      </table>
+    </section>
+
+    <section class="aero">
+      <h2><span class="tag">AeroSpace</span> Workspaces</h2>
+      <p class="sub">Apps open on their own workspace. All workspaces live on the external monitor; undocked they fall back to the laptop.</p>
+      <table>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>c</kbd></td><td>C · Chrome</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>a</kbd></td><td>A · Claude <span class="note">(C taken, L is focus-right)</span></td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>s</kbd></td><td>S · Slack</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>t</kbd></td><td>T · iTerm / Terminal</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>n</kbd></td><td>N · Notion</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>e</kbd></td><td>E · Cursor / VS Code</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>b</kbd></td><td>B · Safari</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>1</kbd>–<kbd>5</kbd></td><td>Free workspaces</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>ws</kbd></td><td>Send window to that workspace and follow it</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇥</kbd></td><td>Previous workspace (back and forth)</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>⇥</kbd></td><td>Move workspace to next monitor</td></tr>
+      </table>
+    </section>
+
+    <section class="aero">
+      <h2><span class="tag">AeroSpace</span> Modes</h2>
+      <h3>Resize mode · <kbd>⌥</kbd><kbd>r</kbd></h3>
+      <table>
+        <tr><td class="k"><kbd>h</kbd> <span class="or">/</span> <kbd>l</kbd></td><td>Narrower / wider</td></tr>
+        <tr><td class="k"><kbd>j</kbd> <span class="or">/</span> <kbd>k</kbd></td><td>Taller / shorter</td></tr>
+        <tr><td class="k"><kbd>-</kbd> <span class="or">/</span> <kbd>^</kbd></td><td>Smart shrink / grow</td></tr>
+        <tr><td class="k"><kbd>b</kbd></td><td>Balance sizes and exit</td></tr>
+        <tr><td class="k"><kbd>↩</kbd> <span class="or">/</span> <kbd>esc</kbd></td><td>Exit</td></tr>
+      </table>
+      <h3>Service mode · <kbd>⌥</kbd><kbd>⇧</kbd><kbd>;</kbd></h3>
+      <table>
+        <tr><td class="k"><kbd>esc</kbd></td><td>Reload config and exit</td></tr>
+        <tr><td class="k"><kbd>r</kbd></td><td>Reset layout (flatten tree)</td></tr>
+        <tr><td class="k"><kbd>f</kbd></td><td>Float ↔ tile</td></tr>
+        <tr><td class="k"><kbd>b</kbd></td><td>Balance sizes</td></tr>
+        <tr><td class="k"><kbd>⌫</kbd></td><td>Close all windows except the focused one</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Join with neighbour (nest windows)</td></tr>
+      </table>
+      <h3>When things go wrong</h3>
+      <table>
+        <tr><td colspan="2">Shortcuts type letters → quit AeroSpace from the menu bar and reopen it (reload isn't enough).</td></tr>
+        <tr><td colspan="2">Window on the wrong workspace → <code>aerospace run-callback --for-every-window on-window-detected</code></td></tr>
+      </table>
+    </section>
+
+    <!-- ============================== tmux =============================== -->
+    <section class="tmux">
+      <h2><span class="tag">tmux</span> Panes</h2>
+      <p class="sub">Press prefix <kbd>⌃</kbd><kbd>Space</kbd>, release, then the key.</p>
+      <table>
+        <tr><td class="k"><kbd>v</kbd> <span class="or">or</span> <kbd>|</kbd></td><td>Split side by side</td></tr>
+        <tr><td class="k"><kbd>s</kbd> <span class="or">or</span> <kbd>-</kbd></td><td>Split stacked</td></tr>
+        <tr><td class="k"><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Select pane</td></tr>
+        <tr><td class="k"><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td>Resize pane (hold to repeat)</td></tr>
+        <tr><td class="k"><kbd>z</kbd></td><td>Zoom / unzoom pane</td></tr>
+        <tr><td class="k"><kbd>x</kbd></td><td>Kill pane (no confirmation)</td></tr>
+        <tr><td class="k"><kbd>q</kbd></td><td>Show pane numbers</td></tr>
+        <tr><td class="k"><kbd>{</kbd> <span class="or">/</span> <kbd>}</kbd></td><td>Swap pane with previous / next</td></tr>
+        <tr><td class="k"><kbd>!</kbd></td><td>Break pane out into its own window</td></tr>
+      </table>
+      <h3>No prefix needed</h3>
+      <table>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Move between panes <em>and</em> nvim splits</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>Space</kbd> <kbd>⌃</kbd><kbd>l</kbd></td><td>Clear the shell screen (plain <kbd>⌃</kbd><kbd>l</kbd> moves right)</td></tr>
+      </table>
+    </section>
+
+    <section class="tmux">
+      <h2><span class="tag">tmux</span> Windows &amp; sessions</h2>
+      <h3>Windows</h3>
+      <table>
+        <tr><td class="k"><kbd>c</kbd></td><td>New window (current directory)</td></tr>
+        <tr><td class="k"><kbd>n</kbd> <span class="or">/</span> <kbd>p</kbd></td><td>Next / previous window</td></tr>
+        <tr><td class="k"><kbd>1</kbd>–<kbd>9</kbd></td><td>Jump to window (numbering starts at 1)</td></tr>
+        <tr><td class="k"><kbd>&lt;</kbd> <span class="or">/</span> <kbd>&gt;</kbd></td><td>Move window left / right (repeatable)</td></tr>
+        <tr><td class="k"><kbd>,</kbd></td><td>Rename window</td></tr>
+        <tr><td class="k"><kbd>w</kbd></td><td>Window tree</td></tr>
+        <tr><td class="k"><kbd>X</kbd></td><td>Kill window</td></tr>
+      </table>
+      <h3>Sessions</h3>
+      <table>
+        <tr><td class="k"><kbd>f</kbd></td><td>Fuzzy session picker (zoxide dirs + ~/workspace)</td></tr>
+        <tr><td class="k"><kbd>S</kbd></td><td>Session tree</td></tr>
+        <tr><td class="k"><kbd>⇥</kbd></td><td>Last session</td></tr>
+        <tr><td class="k"><kbd>(</kbd> <span class="or">/</span> <kbd>)</kbd></td><td>Previous / next session</td></tr>
+        <tr><td class="k"><kbd>$</kbd></td><td>Rename session</td></tr>
+        <tr><td class="k"><kbd>d</kbd></td><td>Detach</td></tr>
+      </table>
+      <h3>Shell</h3>
+      <table>
+        <tr><td class="k"><code>t</code></td><td>Attach to (or create) session <code>main</code></td></tr>
+        <tr><td class="k"><code>tf</code></td><td>Session picker outside tmux</td></tr>
+      </table>
+    </section>
+
+    <section class="tmux">
+      <h2><span class="tag">tmux</span> Copy &amp; misc</h2>
+      <h3>Copy mode · <kbd>[</kbd></h3>
+      <table>
+        <tr><td class="k"><kbd>v</kbd></td><td>Start selection</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>v</kbd></td><td>Rectangle selection</td></tr>
+        <tr><td class="k"><kbd>y</kbd></td><td>Copy to macOS clipboard and exit</td></tr>
+        <tr><td class="k"><kbd>/</kbd> <span class="or">/</span> <kbd>?</kbd></td><td>Search down / up (<kbd>n</kbd> <kbd>N</kbd> next)</td></tr>
+        <tr><td class="k"><kbd>esc</kbd></td><td>Cancel</td></tr>
+        <tr><td class="k">mouse drag</td><td>Select and copy</td></tr>
+        <tr><td class="k"><kbd>]</kbd></td><td>Paste tmux buffer (after prefix)</td></tr>
+      </table>
+      <h3>Misc</h3>
+      <table>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>Space</kbd> ×2</td><td>Send <kbd>⌃</kbd><kbd>Space</kbd> to the app (nvim completion)</td></tr>
+        <tr><td class="k"><kbd>r</kbd></td><td>Reload tmux.conf</td></tr>
+        <tr><td class="k"><kbd>:</kbd></td><td>Command prompt</td></tr>
+        <tr><td class="k"><kbd>?</kbd></td><td>List all key bindings</td></tr>
+      </table>
+      <h3>Plugins <span class="note">(after installing TPM)</span></h3>
+      <table>
+        <tr><td class="k"><kbd>I</kbd></td><td>Install plugins</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>s</kbd> <span class="or">/</span> <kbd>⌃</kbd><kbd>r</kbd></td><td>Save / restore sessions (also autosaved every 15 min)</td></tr>
+      </table>
+    </section>
+
+    <!-- ============================== nvim =============================== -->
+    <section class="nvim">
+      <h2><span class="tag">nvim</span> Essentials</h2>
+      <p class="sub">NvChad v2.5. Leader is <kbd>Space</kbd>.</p>
+      <table>
+        <tr><td class="k"><kbd>;</kbd></td><td>Command mode (same as <kbd>:</kbd>)</td></tr>
+        <tr><td class="k"><kbd>j</kbd><kbd>k</kbd></td><td>Leave insert mode</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>s</kbd></td><td>Save file</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>c</kbd></td><td>Copy whole file</td></tr>
+        <tr><td class="k"><kbd>esc</kbd></td><td>Clear search highlight</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>c</kbd><kbd>h</kbd></td><td>NvChad's built-in cheatsheet</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>w</kbd><kbd>K</kbd></td><td>Show every keymap (which-key)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>n</kbd> <span class="or">/</span> <kbd>Space</kbd><kbd>r</kbd><kbd>n</kbd></td><td>Toggle line numbers / relative numbers</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>t</kbd><kbd>h</kbd></td><td>Pick theme</td></tr>
+      </table>
+      <h3>Buffers &amp; files</h3>
+      <table>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Move between splits and tmux panes</td></tr>
+        <tr><td class="k"><kbd>⇥</kbd> <span class="or">/</span> <kbd>⇧</kbd><kbd>⇥</kbd></td><td>Next / previous buffer</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>x</kbd></td><td>Close buffer</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>b</kbd></td><td>New buffer</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>n</kbd></td><td>Toggle file tree</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>e</kbd></td><td>Focus file tree</td></tr>
+      </table>
+    </section>
+
+    <section class="nvim">
+      <h2><span class="tag">nvim</span> Find (Telescope)</h2>
+      <table>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>f</kbd></td><td>Find files (incl. dotfiles; skips .git &amp; gitignored)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>a</kbd></td><td>Find all files (incl. gitignored)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>w</kbd></td><td>Live grep (search text in project)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>z</kbd></td><td>Fuzzy search current buffer</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>b</kbd></td><td>Open buffers</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>o</kbd></td><td>Recent files</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>h</kbd></td><td>Help pages</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>m</kbd><kbd>a</kbd></td><td>Marks</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>t</kbd></td><td>Git status</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>c</kbd><kbd>m</kbd></td><td>Git commits</td></tr>
+      </table>
+      <h3>Terminal inside nvim</h3>
+      <table>
+        <tr><td class="k"><kbd>Space</kbd><kbd>h</kbd> <span class="or">/</span> <kbd>Space</kbd><kbd>v</kbd></td><td>New horizontal / vertical terminal</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Move out of / into a terminal (starts in typing mode)</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>x</kbd></td><td>Leave terminal mode (to scroll / copy)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>p</kbd><kbd>t</kbd></td><td>Pick a hidden terminal</td></tr>
+        <tr><td colspan="2" class="note">NvChad's <kbd>⌥</kbd><kbd>h</kbd>/<kbd>v</kbd>/<kbd>i</kbd> toggles don't reach nvim: AeroSpace owns <kbd>⌥</kbd><kbd>h</kbd>, and iTerm sends Option as a normal key. Use a tmux split instead.</td></tr>
+      </table>
+    </section>
+
+    <section class="nvim">
+      <h2><span class="tag">nvim</span> Code</h2>
+      <h3>LSP</h3>
+      <table>
+        <tr><td class="k"><kbd>g</kbd><kbd>d</kbd> <span class="or">/</span> <kbd>g</kbd><kbd>D</kbd></td><td>Go to definition / declaration</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>D</kbd></td><td>Go to type definition</td></tr>
+        <tr><td class="k"><kbd>K</kbd></td><td>Hover docs</td></tr>
+        <tr><td class="k"><kbd>g</kbd><kbd>r</kbd><kbd>r</kbd></td><td>References</td></tr>
+        <tr><td class="k"><kbd>g</kbd><kbd>r</kbd><kbd>i</kbd></td><td>Implementations</td></tr>
+        <tr><td class="k"><kbd>g</kbd><kbd>r</kbd><kbd>a</kbd></td><td>Code action</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>r</kbd><kbd>a</kbd></td><td>Rename symbol</td></tr>
+        <tr><td class="k"><kbd>[</kbd><kbd>d</kbd> <span class="or">/</span> <kbd>]</kbd><kbd>d</kbd></td><td>Previous / next diagnostic</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>d</kbd><kbd>s</kbd></td><td>Diagnostics list</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>f</kbd><kbd>m</kbd></td><td>Format (conform)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>/</kbd></td><td>Toggle comment (line or selection)</td></tr>
+      </table>
+      <h3>Completion (insert mode)</h3>
+      <table>
+        <tr><td class="k"><kbd>⇥</kbd> <span class="or">/</span> <kbd>⇧</kbd><kbd>⇥</kbd></td><td>Next / previous item, snippet jump</td></tr>
+        <tr><td class="k"><kbd>↩</kbd> <span class="or">or</span> <kbd>⌃</kbd><kbd>y</kbd></td><td>Accept</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>e</kbd></td><td>Close menu</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>Space</kbd></td><td>Open menu (press twice inside tmux)</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>b</kbd> <span class="or">/</span> <kbd>⌃</kbd><kbd>e</kbd></td><td class="note">Outside the menu: start / end of line</td></tr>
+      </table>
+      <h3>Debug (Python)</h3>
+      <table>
+        <tr><td class="k"><kbd>Space</kbd><kbd>d</kbd><kbd>b</kbd></td><td>Toggle breakpoint</td></tr>
+        <tr><td class="k"><kbd>fn</kbd><kbd>F5</kbd></td><td>Start / continue</td></tr>
+        <tr><td class="k"><kbd>fn</kbd><kbd>F10</kbd></td><td>Step over</td></tr>
+        <tr><td class="k"><kbd>fn</kbd><kbd>F11</kbd></td><td>Step into <span class="warn">(macOS uses F11 for Show Desktop by default)</span></td></tr>
+        <tr><td class="k"><kbd>fn</kbd><kbd>F12</kbd></td><td>Step out</td></tr>
+      </table>
+    </section>
+
+    <!-- ============================== setup ============================== -->
+    <section class="setup">
+      <h2><span class="tag">Setup</span> JIS keyboard &amp; dotfiles</h2>
+      <h3>Keyboard</h3>
+      <table>
+        <tr><td class="k"><kbd>英数</kbd></td><td>Switch to English before tmux/nvim keys; <kbd>かな</kbd> mode sends composed text</td></tr>
+        <tr><td class="k"><kbd>^</kbd></td><td>Where AeroSpace's "equal" key lives on JIS (right of <kbd>-</kbd>)</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>Space</kbd></td><td>Must be unticked in System Settings → Keyboard Shortcuts → Input Sources</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd> letters</td><td>Option + c a s t n e b h j k l f r 1–5 are taken by AeroSpace, so they no longer type special characters</td></tr>
+      </table>
+      <h3>Dotfiles</h3>
+      <table>
+        <tr><td class="k">repo</td><td><code>~/workspace/dotfiles</code> · branch <code>macos</code></td></tr>
+        <tr><td class="k">link all</td><td><code>./install.sh</code></td></tr>
+        <tr><td class="k">unlink one</td><td><code>./install.sh -D tmux</code></td></tr>
+        <tr><td class="k">new Mac</td><td><code>brew bundle --file Brewfile</code></td></tr>
+        <tr><td class="k">commit</td><td>Run <code>git commit</code> yourself (1Password signs it)</td></tr>
+      </table>
+    </section>
+
+  </div>
+  <p class="empty hidden" id="empty">No shortcuts match.</p>
+  <footer>Generated from the configs in ~/workspace/dotfiles (macos branch). Print it: ⌘P fits three columns on A4.</footer>
+</div>
+
+<script>
+(() => {
+  const q = document.getElementById('q');
+  const sections = [...document.querySelectorAll('#grid section')];
+  const empty = document.getElementById('empty');
+  const rows = sections.flatMap(s => [...s.querySelectorAll('tr')]);
+  rows.forEach(r => { r.dataset.text = r.textContent.toLowerCase().replace(/\s+/g, ' '); });
+
+  function filter() {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    sections.forEach(s => {
+      const title = s.querySelector('h2').textContent.toLowerCase();
+      const titleHit = term && title.includes(term);
+      let any = false;
+      s.querySelectorAll('table').forEach(t => {
+        let tAny = false;
+        t.querySelectorAll('tr').forEach(r => {
+          const hit = !term || titleHit || r.dataset.text.includes(term);
+          r.classList.toggle('hidden', !hit);
+          tAny = tAny || hit;
+        });
+        t.classList.toggle('hidden', !tAny);
+        const h3 = t.previousElementSibling;
+        if (h3 && h3.tagName === 'H3') h3.classList.toggle('hidden', !tAny);
+        any = any || tAny;
+      });
+      s.classList.toggle('hidden', !any);
+      if (any) shown++;
+    });
+    empty.classList.toggle('hidden', shown > 0);
+  }
+  q.addEventListener('input', filter);
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+    if (e.key === 'Escape' && document.activeElement === q) { q.value = ''; filter(); q.blur(); }
+  });
+
+  const root = document.documentElement;
+  const btn = document.getElementById('theme');
+  try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (_) {}
+  btn.addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark'
+                                    : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch (_) {}
+  });
+})();
+</script>
+</body>
+</html>
