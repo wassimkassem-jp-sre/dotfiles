@@ -64,6 +64,13 @@ iTerm/Terminal → T, Cursor/VS Code → E, Safari → B, Notion → N.
 Workspaces take the app's first letter; on a collision, the next free letter
 (Claude: C is Chrome's and L is focus-right, so A).
 
+Monitors: with any external display connected, every workspace lives on it and the laptop screen
+shows a spare, empty one. Undocked, all workspaces fall back to the laptop.
+If the Option shortcuts ever stop working (e.g. after granting Accessibility), quit AeroSpace from
+its menu-bar icon and reopen it; `reload-config` alone doesn't fix that.
+If a window misses its rule (e.g. it was off-screen at startup), re-run the rules with
+`aerospace run-callback --for-every-window on-window-detected`.
+
 ### tmux (prefix `Ctrl-Space`)
 
 | Keys              | Action                                        |
