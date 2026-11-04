@@ -1,0 +1,10 @@
+# brew bundle --file ~/dotfiles/Brewfile
+brew "stow"
+brew "tmux"
+brew "neovim"
+brew "fzf"
+brew "zoxide"
+brew "ripgrep"
+brew "zsh-completions"
+cask "nikitabobko/tap/aerospace"
+cask "iterm2"
