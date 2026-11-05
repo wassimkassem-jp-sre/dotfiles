@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Pick a directory (zoxide history + ~/workspace/*) with fzf and attach to a
-# tmux session named after it, creating the session if needed.
+# Pick a directory (zoxide history + the folders inside each of
+# $TMUX_SESSIONIZER_DIRS, default ~/workspace) with fzf and attach to a tmux
+# session named after it, creating the session if needed.
 # Usage: tmux-sessionizer [dir]      (bound to `prefix f` in tmux)
 set -euo pipefail
 
@@ -9,7 +10,9 @@ if [[ $# -ge 1 ]]; then
 else
   dir=$(
     { zoxide query -l 2>/dev/null || true
-      find "$HOME/workspace" -mindepth 1 -maxdepth 1 -type d 2>/dev/null || true
+      for root in ${TMUX_SESSIONIZER_DIRS:-$HOME/workspace}; do
+        find "$root" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null || true
+      done
     } | awk '!seen[$0]++' | fzf --prompt="session> " --height=100% --reverse
   ) || exit 0
 fi

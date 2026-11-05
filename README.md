@@ -20,8 +20,8 @@ brew bundle --file ~/workspace/dotfiles/Brewfile
 ```
 
 oh-my-zsh and powerlevel10k are installed separately (see their docs).
-If a real file already exists where a link should go, stow refuses; move it
-away, or run `stow --adopt <pkg>` to pull it into the repo, then `git diff`.
+If a real file already exists where a link should go, `install.sh` moves it to
+`~/dotfiles-backup-<date>/` first. `./install.sh -n` shows what would change.
 
 Optional tmux plugins (session restore after reboot):
 
@@ -92,6 +92,24 @@ If a window misses its rule (e.g. it was off-screen at startup), re-run the rule
 | `Ctrl-l`          | clear the shell screen                        |
 
 Shell aliases: `t` attaches to a `main` session, `tf` runs the session picker.
+
+## Coder VM (nvim instead of Cursor)
+
+Code runs on the Coder VM, so nvim does too: SSH in from iTerm and run tmux + nvim there.
+The VM uses the `linux` branch, which shares this branch's `nvim`, `tmux` and `bin` packages
+(see its README for the setup).
+
+```bash
+coder config-ssh                                         # once: adds <workspace>.coder hosts
+ssh green-sturgeon-38.coder -t tmux new -A -s main       # attach to tmux on the VM
+```
+
+- Open that from an iTerm tab that is **not** inside local tmux, or both tmuxes fight over Ctrl-Space.
+- Copying (`y` in tmux copy mode, `y` in nvim) reaches the Mac clipboard over SSH via OSC 52 once
+  iTerm → Settings → General → Selection → "Applications in terminal may access clipboard" is on.
+- Web apps on the VM: `coder port-forward green-sturgeon-38 --tcp 8080`.
+- Keep the shared packages identical on both branches: change them on one branch, then
+  `git checkout <other-branch> -- nvim tmux bin install.sh` on the other.
 
 ## Local, untracked files
 

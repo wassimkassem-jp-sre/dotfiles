@@ -396,6 +396,15 @@
         <tr><td class="k">unlink one</td><td><code>./install.sh -D tmux</code></td></tr>
         <tr><td class="k">new Mac</td><td><code>brew bundle --file Brewfile</code></td></tr>
         <tr><td class="k">commit</td><td>Run <code>git commit</code> yourself (1Password signs it)</td></tr>
+        <tr><td class="k">sync</td><td><code>git checkout macos -- nvim tmux bin install.sh</code> on <code>linux</code></td></tr>
+      </table>
+      <h3>Coder VM</h3>
+      <table>
+        <tr><td class="k">connect</td><td><code>ssh green-sturgeon-38.coder -t tmux new -A -s main</code> (from a tab outside local tmux)</td></tr>
+        <tr><td class="k">first time</td><td>clone branch <code>linux</code>, then <code>./bootstrap.sh</code> and <code>./install.sh</code></td></tr>
+        <tr><td class="k">start / stop</td><td><code>coder start green-sturgeon-38</code> · <code>coder stop …</code></td></tr>
+        <tr><td class="k">web app</td><td><code>coder port-forward green-sturgeon-38 --tcp 8080</code></td></tr>
+        <tr><td colspan="2" class="note">Same tmux and nvim keys on the VM. Copies reach the Mac clipboard once iTerm allows clipboard access (Settings → General → Selection).</td></tr>
       </table>
     </section>
 

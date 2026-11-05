@@ -11,9 +11,14 @@ return {
   },
   -- <leader>ff also lists dotfiles (.zshrc, .github/, ...). Gitignored files
   -- and .git/ stay hidden; <leader>fa still shows everything.
+  -- Every picker shows the file name first and its folder after it, dimmed,
+  -- so long paths stay readable.
   {
     "nvim-telescope/telescope.nvim",
     opts = {
+      defaults = {
+        path_display = { "filename_first" },
+      },
       pickers = {
         find_files = {
           find_command = { "rg", "--files", "--color", "never", "--hidden", "--glob", "!**/.git/*" },
