@@ -33,8 +33,16 @@ nvim               # lazy.nvim installs the plugins on first start
 gh auth login      # for Octo (PRs inside nvim)
 ```
 
-The very first nvim start may show "Failed to run `config` for indent-blankline": NvChad
-builds its theme cache on that run. Quit and start nvim again; it's clean from then on.
+Plugins must match the versions pinned in `lazy-lock.json` (the same ones the Mac runs).
+If `git status` ever shows `lazy-lock.json` modified, the plugins have drifted to newer
+commits; newer NvChad `ui`/`base46` break with "Failed to run `config` for
+indent-blankline ... No highlight group 'IblChar'". Put them back and rebuild the theme cache:
+
+```bash
+git checkout -- nvim/.config/nvim/lazy-lock.json
+nvim --headless "+Lazy! restore" +qa
+nvim --headless -c 'lua require("base46").load_all_highlights()' +qa
+```
 
 `bootstrap.sh` is safe to re-run; `./bootstrap.sh -u` upgrades the `~/.local` tools.
 It makes zsh the login shell when it has sudo.
