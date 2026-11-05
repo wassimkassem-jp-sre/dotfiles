@@ -9,7 +9,7 @@ Each top-level directory is a [GNU stow](https://www.gnu.org/software/stow/) pac
 | `tmux`      | `~/.config/tmux/tmux.conf`                 |
 | `aerospace` | `~/.config/aerospace/aerospace.toml`       |
 | `nvim`      | `~/.config/nvim` (NvChad v2.5 starter)     |
-| `bin`       | `~/.local/bin/tmux-sessionizer`            |
+| `bin`       | `~/.local/bin/tmux-sessionizer`, `review`  |
 
 ## Install on a new Mac
 
@@ -52,7 +52,7 @@ Modifier ownership: **Option** = AeroSpace, **Ctrl-Space** = tmux prefix, **Spac
 |-----------------------------|------------------------------------------------|
 | `⌥ h/j/k/l`                 | focus window                                   |
 | `⌥ ⇧ h/j/k/l`               | move window                                    |
-| `⌥ 1-5`, `⌥ c/a/s/t/e/b/n/o` | workspace (Chrome, clAude, Slack, Terminal, Editor, safari/Browser, Notion, cOder VM) |
+| `⌥ 1-5`, `⌥ c/a/s/t/e/b/n/o/v` | workspace (Chrome, clAude, Slack, Terminal, Editor, safari/Browser, Notion, cOder VM, reView) |
 | `⌥ ⇧ <ws>`                  | send window to workspace and follow            |
 | `⌥ tab`                     | previous workspace                             |
 | `⌥ f` / `⌥ ⇧ f`             | fullscreen / float toggle                      |
@@ -64,6 +64,7 @@ Modifier ownership: **Option** = AeroSpace, **Ctrl-Space** = tmux prefix, **Spac
 
 Every new window is sent to its app's workspace when it opens: Chrome → C, Claude → A, Slack → S,
 iTerm/Terminal → T, Cursor/VS Code → E, Safari → B, Notion → N.
+V holds a PR review (Chrome above nvim), put there by the `review` script.
 O holds the Coder VM's iTerm window: the `vm` shell function moves it there (a rule can't tell
 it apart from other iTerm windows).
 Workspaces take the app's first letter; on a collision, the next free letter
@@ -100,6 +101,25 @@ If a window misses its rule (e.g. it was off-screen at startup), re-run the rule
 | `Ctrl-l`          | clear the shell screen                        |
 
 Shell aliases: `t` attaches to a `main` session, `tf` runs the session picker.
+
+## Reviewing a PR
+
+```bash
+review https://github.com/wayveai/WayveCode/pull/155853   # or: review 155853
+review -n 155853                                         # worktree only, no windows
+```
+
+or ⌘Space → "review" (`Review PR.app`, prefilled from the clipboard or Chrome's current tab).
+On workspace V (⌥V) you get Chrome with the PR on top and nvim below, in a worktree of the PR
+branch showing just the PR's changes (diffview: file list left, side-by-side diff right;
+`Space g q` closes it, `:DiffviewOpen origin/main...HEAD` reopens it).
+
+- Worktrees: `~/workspace/pr-<n>` for WayveCode, `~/workspace/<repo>-pr-<n>` otherwise. A branch
+  that's already checked out (your own PR, an earlier review) reuses that worktree.
+- Every run fetches the latest push and fast-forwards the worktree; local commits or a force-push
+  are reported, never overwritten.
+- Windows already on V go back to C (Chrome) / T (iTerm) first, so V is always one review.
+- Done with a review: `git -C ~/workspace/WayveCode worktree remove ~/workspace/pr-<n>`.
 
 ## Coder VM (nvim instead of Cursor)
 

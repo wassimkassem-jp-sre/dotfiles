@@ -57,6 +57,17 @@ return {
       { "<leader>gf", "<cmd>LazyGitFilterCurrentFile<CR>", desc = "lazygit current file history" },
     },
   },
+  -- PR-style diffs: file list on the left, side-by-side diff on the right.
+  -- `review <PR>` opens `:DiffviewOpen origin/<base>...HEAD` (just the PR's changes).
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
+    keys = {
+      { "<leader>gd", "<cmd>DiffviewOpen<CR>", desc = "diffview uncommitted changes" },
+      { "<leader>gq", "<cmd>DiffviewClose<CR>", desc = "diffview close" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<CR>", desc = "diffview current file history" },
+    },
+  },
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save

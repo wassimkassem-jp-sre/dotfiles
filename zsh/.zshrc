@@ -67,19 +67,30 @@ alias keys='open ~/workspace/dotfiles/cheatsheet.html'
 # close it; the VM's tmux keeps running.
 CODER_VM=${CODER_VM:-green-sturgeon-38}
 vm() {
-  local ws=${1:-$CODER_VM}
-  if (( $(aerospace list-windows --workspace O --count 2>/dev/null || echo 0) > 0 )); then
+  local ws=${1:-$CODER_VM} iterm=com.googlecode.iterm2 before id i
+  # Already open: an iTerm window on O. (Other apps' windows there don't count.)
+  if (( $(aerospace list-windows --workspace O --app-bundle-id $iterm --count 2>/dev/null || echo 0) > 0 )); then
     aerospace workspace O
     return
   fi
+  # Open a new iTerm window (this also starts iTerm if it isn't running), then
+  # find it by its new window id, not by focus: a just-launched iTerm isn't
+  # focused yet, so "the focused window" could be anything.
+  before=$(aerospace list-windows --all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null)
   osascript -e "tell application \"iTerm\" to create window with default profile command \"/bin/zsh -lic '_vm_attach $ws'\"" >/dev/null
+  for i in {1..50}; do
+    id=$(aerospace list-windows --all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null |
+      grep -vxF -f <(print -r -- "$before") | head -1)
+    [[ -n $id ]] && break
+    sleep 0.2
+  done
+  [[ -n $id ]] || { print -u2 "vm: the iTerm window didn't appear"; return 1; }
+  aerospace move-node-to-workspace --window-id "$id" O
+  aerospace workspace O
+  aerospace focus --window-id "$id"
 }
-# Runs inside the new window: move it to workspace O, then attach over ssh.
+# Runs inside the new window: attach to the VM's tmux over ssh.
 _vm_attach() {
-  sleep 0.3   # let AeroSpace's new-window rule (iTerm -> T) run first
-  local id
-  id=$(aerospace list-windows --focused --format '%{window-id}' 2>/dev/null)
-  [[ -n $id ]] && aerospace move-node-to-workspace --focus-follows-window --window-id "$id" O
   ssh "$1.coder" -t tmux new -A -s main ||
     { print "\nssh exited with $?. Press Enter to close."; read -r; }
 }

@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# review <PR url | number> — open a GitHub PR for review on AeroSpace workspace V:
+#   * Chrome on top, at the PR page
+#   * nvim below, in a worktree of the PR branch, showing the PR's diff
+#     (diffview.nvim: origin/<base>...HEAD, i.e. exactly what the PR changes)
+#
+#   review https://github.com/wayveai/WayveCode/pull/155853
+#   review 155853          # repo = the git repo you're in, else ~/workspace/WayveCode
+#   review -n 155853       # just create/update the worktree, no windows
+#
+# The worktree is ~/workspace/pr-<n> (WayveCode) or ~/workspace/<repo>-pr-<n>.
+# If the PR branch is already checked out somewhere (your own PR, an older
+# review), that worktree is reused. Either way it's fast-forwarded to the
+# latest push; local changes or a force-push are reported, never overwritten.
+# Windows already on workspace V go back to their own workspaces first.
+# Also available from Spotlight as "Review PR" (see build-apps.sh). macOS only.
+set -euo pipefail
+
+DEFAULT_REPO_DIR="$HOME/workspace/WayveCode"
+WS=V
+
+die() {
+  echo "review: $*" >&2
+  # Launched from Spotlight there's no terminal, so say it in a notification too.
+  [[ -t 2 ]] || osascript -e "display notification \"$*\" with title \"Review PR\"" 2>/dev/null || true
+  exit 1
+}
+say() { echo "==> $*"; }
+
+[[ $(uname) == Darwin ]] || die "macOS only (uses AeroSpace, Chrome and iTerm)"
+
+# Internal: the command the new iTerm window runs.
+if [[ ${1:-} == --nvim ]]; then
+  cd "$2"
+  exec nvim -c "DiffviewOpen origin/$3...HEAD"
+fi
+
+windows=true
+[[ ${1:-} == -n || ${1:-} == --no-windows ]] && { windows=false; shift; }
+[[ $# -ge 1 ]] || { sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
+arg=$1
+
+# --- which PR, which repo ------------------------------------------------------
+if [[ $arg =~ github\.com/([^/]+)/([^/]+)/pull/([0-9]+) ]]; then
+  slug="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"; num=${BASH_REMATCH[3]}
+elif [[ $arg =~ ^#?([0-9]+)$ ]]; then
+  num=${BASH_REMATCH[1]}
+  dir=$(git rev-parse --show-toplevel 2>/dev/null || echo "$DEFAULT_REPO_DIR")
+  slug=$(git -C "$dir" remote get-url origin | sed -E 's#.*github\.com[:/]##; s#\.git$##')
+else
+  die "not a PR URL or number: $arg"
+fi
+repo_name=${slug#*/}
+
+# A local clone whose origin is this repo: the current repo, else ~/workspace/*.
+repo_dir=""
+for d in "$(git rev-parse --show-toplevel 2>/dev/null || true)" "$HOME"/workspace/*/; do
+  [[ -n $d && -d $d ]] || continue
+  url=$(git -C "$d" remote get-url origin 2>/dev/null) || continue
+  if [[ $url =~ github\.com[:/]$slug(\.git)?$ ]]; then
+    repo_dir=$(git -C "$d" rev-parse --path-format=absolute --git-common-dir)
+    repo_dir=${repo_dir%/.git}
+    break
+  fi
+done
+[[ -n $repo_dir ]] || die "no clone of $slug in ~/workspace (git clone it there first)"
+
+say "PR #$num in $slug (clone: $repo_dir)"
+read -r head base url fork < <(gh pr view "$num" -R "$slug" \
+  --json headRefName,baseRefName,url,isCrossRepository \
+  -q '"\(.headRefName) \(.baseRefName) \(.url) \(.isCrossRepository)"') ||
+  die "gh couldn't read PR #$num in $slug (gh auth status?)"
+
+# --- worktree, up to date with the latest push -----------------------------------
+# GitHub keeps refs/pull/<n>/head for every PR (forks, merged, deleted branches),
+# so that is what we fetch and fast-forward to. The local branch is named like
+# the PR branch (so you can push fixups), or pr/<n> for a fork.
+remote_ref="refs/remotes/origin/pr/$num"
+git -C "$repo_dir" fetch -q origin "+refs/pull/$num/head:$remote_ref" "+refs/heads/$base:refs/remotes/origin/$base" ||
+  die "git fetch of PR #$num failed"
+[[ $fork == true ]] && branch="pr/$num" || branch=$head
+
+ff() {   # fast-forward worktree $1 to the PR's latest push, never overwrite
+  git -C "$1" merge -q --ff-only "$remote_ref" 2>/dev/null ||
+    echo "review: $1 can't fast-forward to the latest push (local commits, uncommitted conflicts or a force-push); left as is" >&2
+}
+
+wt=$(git -C "$repo_dir" worktree list --porcelain |
+  awk -v b="branch refs/heads/$branch" '/^worktree /{p=substr($0,10)} $0==b{print p; exit}')
+if [[ -n $wt ]]; then
+  say "reusing $wt"
+  ff "$wt"
+else
+  [[ $repo_name == WayveCode ]] && wt="$HOME/workspace/pr-$num" || wt="$HOME/workspace/$repo_name-pr-$num"
+  [[ -e $wt ]] && die "$wt exists but isn't a worktree of $branch"
+  say "creating worktree $wt (branch $branch; a big repo takes a minute)"
+  if git -C "$repo_dir" show-ref -q --verify "refs/heads/$branch"; then
+    git -C "$repo_dir" worktree add -q "$wt" "$branch"   # keep the existing local branch
+    ff "$wt"
+  else
+    git -C "$repo_dir" worktree add -q -b "$branch" "$wt" "$remote_ref"
+  fi
+  # Track the PR branch when it still exists, so plain git pull/push work there.
+  if [[ $fork != true ]] && git -C "$repo_dir" fetch -q origin "+refs/heads/$head:refs/remotes/origin/$head" 2>/dev/null; then
+    git -C "$wt" branch -q --set-upstream-to="origin/$head"
+  fi
+fi
+
+$windows || { say "worktree ready: $wt  (diff: nvim -c 'DiffviewOpen origin/$base...HEAD')"; exit 0; }
+
+# --- windows on workspace V --------------------------------------------------------
+# Empty V first: Chrome windows go back to C, iTerm windows to T, others to 1.
+while IFS='|' read -r id app; do
+  case $app in
+    com.google.Chrome) home=C ;;
+    com.googlecode.iterm2|com.apple.Terminal) home=T ;;
+    *) home=1 ;;
+  esac
+  aerospace move-node-to-workspace --window-id "$id" "$home"
+done < <(aerospace list-windows --workspace "$WS" --format '%{window-id}|%{app-bundle-id}')
+
+ids() { aerospace list-windows --all --app-bundle-id "$1" --format '%{window-id}' | sort; }
+# Wait for a window of app $1 whose id isn't in $2; print its id.
+new_window() {
+  local i id
+  for i in $(seq 1 50); do
+    id=$(comm -13 <(printf '%s\n' "$2") <(ids "$1") | head -1)
+    [[ -n $id ]] && { echo "$id"; return; }
+    sleep 0.2
+  done
+  return 1
+}
+
+chrome_before=$(ids com.google.Chrome)
+open -na "Google Chrome" --args --new-window "$url"
+chrome=$(new_window com.google.Chrome "$chrome_before") || die "Chrome window didn't appear"
+aerospace move-node-to-workspace --window-id "$chrome" "$WS"
+
+iterm_before=$(ids com.googlecode.iterm2)
+osascript -e "tell application \"iTerm\" to create window with default profile command \"/bin/zsh -lic 'review --nvim $wt $base'\"" >/dev/null
+iterm=$(new_window com.googlecode.iterm2 "$iterm_before") || die "iTerm window didn't appear"
+aerospace move-node-to-workspace --window-id "$iterm" "$WS"
+
+# Stack them: Chrome (moved first) on top, nvim below; focus nvim.
+aerospace workspace "$WS"
+aerospace flatten-workspace-tree --workspace "$WS"
+aerospace layout --window-id "$iterm" v_tiles
+aerospace focus --window-id "$iterm"
+say "workspace $WS: Chrome on top, nvim in $wt below"

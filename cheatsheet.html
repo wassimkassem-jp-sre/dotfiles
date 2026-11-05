@@ -149,6 +149,7 @@
         <tr><td class="k"><kbd>⌥</kbd><kbd>t</kbd></td><td>T · iTerm / Terminal</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>n</kbd></td><td>N · Notion</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>o</kbd></td><td>O · Coder VM session (opened by <code>vm</code>)</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>v</kbd></td><td>V · PR review: Chrome over nvim (opened by <code>review</code>)</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>e</kbd></td><td>E · Cursor / VS Code</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>b</kbd></td><td>B · Safari</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>1</kbd>–<kbd>5</kbd></td><td>Free workspaces</td></tr>
@@ -316,6 +317,15 @@
 
     <section class="nvim">
       <h2><span class="tag">nvim</span> Git &amp; GitHub</h2>
+      <h3>Reviewing a PR</h3>
+      <table>
+        <tr><td class="k">open</td><td><code>review &lt;url|number&gt;</code> or <kbd>⌘</kbd><kbd>Space</kbd> “review” → workspace <kbd>⌥</kbd><kbd>v</kbd></td></tr>
+        <tr><td class="k"><kbd>j</kbd><kbd>k</kbd> <kbd>Enter</kbd></td><td>Pick a changed file in the diffview list</td></tr>
+        <tr><td class="k"><kbd>Tab</kbd> <span class="or">/</span> <kbd>⇧</kbd><kbd>Tab</kbd></td><td>Next / previous changed file</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>q</kbd></td><td>Close diffview (<kbd>Space</kbd><kbd>g</kbd><kbd>d</kbd> diff of uncommitted changes)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>h</kbd></td><td>History of the current file</td></tr>
+        <tr><td colspan="2" class="note">Worktree <code>~/workspace/pr-&lt;n&gt;</code>; each run fetches the latest push and fast-forwards it. <code>review -n</code> = worktree only.</td></tr>
+      </table>
       <h3>lazygit</h3>
       <table>
         <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>g</kbd></td><td>lazygit for this repo (<kbd>q</kbd> closes, <kbd>?</kbd> shows keys)</td></tr>
