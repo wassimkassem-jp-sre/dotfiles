@@ -148,6 +148,7 @@
         <tr><td class="k"><kbd>⌥</kbd><kbd>s</kbd></td><td>S · Slack</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>t</kbd></td><td>T · iTerm / Terminal</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>n</kbd></td><td>N · Notion</td></tr>
+        <tr><td class="k"><kbd>⌥</kbd><kbd>o</kbd></td><td>O · Coder VM session (opened by <code>vm</code>)</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>e</kbd></td><td>E · Cursor / VS Code</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>b</kbd></td><td>B · Safari</td></tr>
         <tr><td class="k"><kbd>⌥</kbd><kbd>1</kbd>–<kbd>5</kbd></td><td>Free workspaces</td></tr>
@@ -191,7 +192,11 @@
         <tr><td class="k"><kbd>v</kbd> <span class="or">or</span> <kbd>|</kbd></td><td>Split side by side</td></tr>
         <tr><td class="k"><kbd>s</kbd> <span class="or">or</span> <kbd>-</kbd></td><td>Split stacked</td></tr>
         <tr><td class="k"><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td>Select pane</td></tr>
-        <tr><td class="k"><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td>Resize pane (hold to repeat)</td></tr>
+        <tr><td class="k"><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td>Move pane: swap with its neighbour (like <kbd>⌥</kbd><kbd>⇧</kbd><kbd>h</kbd>…)</td></tr>
+        <tr><td class="k"><kbd>/</kbd></td><td>Retile: side by side ↔ stacked (like <kbd>⌥</kbd><kbd>/</kbd>)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd></td><td>Cycle all layouts (incl. one big + stack)</td></tr>
+        <tr><td class="k"><kbd>r</kbd></td><td>Resize mode: <kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd>, <kbd>=</kbd> even out, <kbd>esc</kbd> leave</td></tr>
+        <tr><td class="k"><kbd>@</kbd> <span class="or">/</span> <kbd>!</kbd></td><td>Pull a pane in from another window / push this one out</td></tr>
         <tr><td class="k"><kbd>z</kbd></td><td>Zoom / unzoom pane</td></tr>
         <tr><td class="k"><kbd>x</kbd></td><td>Kill pane (no confirmation)</td></tr>
         <tr><td class="k"><kbd>q</kbd></td><td>Show pane numbers</td></tr>
@@ -248,7 +253,7 @@
       <h3>Misc</h3>
       <table>
         <tr><td class="k"><kbd>⌃</kbd><kbd>Space</kbd> ×2</td><td>Send <kbd>⌃</kbd><kbd>Space</kbd> to the app (nvim completion)</td></tr>
-        <tr><td class="k"><kbd>r</kbd></td><td>Reload tmux.conf</td></tr>
+        <tr><td class="k"><kbd>R</kbd></td><td>Reload tmux.conf</td></tr>
         <tr><td class="k"><kbd>:</kbd></td><td>Command prompt</td></tr>
         <tr><td class="k"><kbd>?</kbd></td><td>List all key bindings</td></tr>
       </table>
@@ -400,7 +405,8 @@
       </table>
       <h3>Coder VM</h3>
       <table>
-        <tr><td class="k">connect</td><td><code>ssh green-sturgeon-38.coder -t tmux new -A -s main</code> (from a tab outside local tmux)</td></tr>
+        <tr><td class="k">connect</td><td><code>vm</code> → VM's tmux in its own window on <kbd>⌥</kbd><kbd>o</kbd> (<code>vm &lt;workspace&gt;</code> for another VM)</td></tr>
+        <tr><td class="k">Spotlight</td><td><kbd>⌘</kbd><kbd>Space</kbd> “coder” → Coder VM.app (built by <code>./build-apps.sh</code>)</td></tr>
         <tr><td class="k">first time</td><td>clone branch <code>linux</code>, then <code>./bootstrap.sh</code> and <code>./install.sh</code></td></tr>
         <tr><td class="k">start / stop</td><td><code>coder start green-sturgeon-38</code> · <code>coder stop …</code></td></tr>
         <tr><td class="k">web app</td><td><code>coder port-forward green-sturgeon-38 --tcp 8080</code></td></tr>

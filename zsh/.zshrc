@@ -59,6 +59,31 @@ alias tf='tmux-sessionizer'
 # Open the key cheatsheet (tmux / AeroSpace / nvim)
 alias keys='open ~/workspace/dotfiles/cheatsheet.html'
 
+# ------------------------------------------------------------- Coder VM ----
+# `vm [workspace]` opens the Coder VM's tmux session ("main") in its own iTerm
+# window on AeroSpace workspace O (⌥O). If that window already exists it just
+# switches there. The window is always a fresh one outside local tmux, so the
+# two tmuxes never fight over Ctrl-Space. Detach (Ctrl-Space d) or exit to
+# close it; the VM's tmux keeps running.
+CODER_VM=${CODER_VM:-green-sturgeon-38}
+vm() {
+  local ws=${1:-$CODER_VM}
+  if (( $(aerospace list-windows --workspace O --count 2>/dev/null || echo 0) > 0 )); then
+    aerospace workspace O
+    return
+  fi
+  osascript -e "tell application \"iTerm\" to create window with default profile command \"/bin/zsh -lic '_vm_attach $ws'\"" >/dev/null
+}
+# Runs inside the new window: move it to workspace O, then attach over ssh.
+_vm_attach() {
+  sleep 0.3   # let AeroSpace's new-window rule (iTerm -> T) run first
+  local id
+  id=$(aerospace list-windows --focused --format '%{window-id}' 2>/dev/null)
+  [[ -n $id ]] && aerospace move-node-to-workspace --focus-follows-window --window-id "$id" O
+  ssh "$1.coder" -t tmux new -A -s main ||
+    { print "\nssh exited with $?. Press Enter to close."; read -r; }
+}
+
 # ------------------------------------------------------------ local only ----
 # Host shortnames (kept out of the dotfiles repo).
 [[ -f ~/host_aliases ]] && export $(grep -v '^[[:space:]]*#' ~/host_aliases | xargs)

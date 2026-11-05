@@ -17,6 +17,7 @@ Each top-level directory is a [GNU stow](https://www.gnu.org/software/stow/) pac
 git clone -b macos git@github.com:wassimkassem-jp-sre/dotfiles.git ~/workspace/dotfiles
 brew bundle --file ~/workspace/dotfiles/Brewfile
 ~/workspace/dotfiles/install.sh       # stow every package (target is ~, see .stowrc)
+~/workspace/dotfiles/build-apps.sh    # Spotlight launchers in ~/Applications (Coder VM.app)
 ```
 
 oh-my-zsh and powerlevel10k are installed separately (see their docs).
@@ -51,7 +52,7 @@ Modifier ownership: **Option** = AeroSpace, **Ctrl-Space** = tmux prefix, **Spac
 |-----------------------------|------------------------------------------------|
 | `⌥ h/j/k/l`                 | focus window                                   |
 | `⌥ ⇧ h/j/k/l`               | move window                                    |
-| `⌥ 1-5`, `⌥ c/a/s/t/e/b/n`  | workspace (Chrome, clAude, Slack, Terminal, Editor, safari/Browser, Notion) |
+| `⌥ 1-5`, `⌥ c/a/s/t/e/b/n/o` | workspace (Chrome, clAude, Slack, Terminal, Editor, safari/Browser, Notion, cOder VM) |
 | `⌥ ⇧ <ws>`                  | send window to workspace and follow            |
 | `⌥ tab`                     | previous workspace                             |
 | `⌥ f` / `⌥ ⇧ f`             | fullscreen / float toggle                      |
@@ -63,6 +64,8 @@ Modifier ownership: **Option** = AeroSpace, **Ctrl-Space** = tmux prefix, **Spac
 
 Every new window is sent to its app's workspace when it opens: Chrome → C, Claude → A, Slack → S,
 iTerm/Terminal → T, Cursor/VS Code → E, Safari → B, Notion → N.
+O holds the Coder VM's iTerm window: the `vm` shell function moves it there (a rule can't tell
+it apart from other iTerm windows).
 Workspaces take the app's first letter; on a collision, the next free letter
 (Claude: C is Chrome's and L is focus-right, so A).
 
@@ -79,7 +82,12 @@ If a window misses its rule (e.g. it was off-screen at startup), re-run the rule
 |-------------------|-----------------------------------------------|
 | `v` or `\|`       | split side by side                            |
 | `s` or `-`        | split stacked                                 |
-| `h/j/k/l`         | select pane (`H/J/K/L` resize, repeatable)    |
+| `h/j/k/l`         | select pane                                   |
+| `H/J/K/L`         | move pane: swap with its neighbour (like `⌥ ⇧ h/j/k/l`) |
+| `/`               | retile: all panes side by side ↔ stacked (like `⌥ /`) |
+| `Space`           | cycle all tmux layouts (incl. one big + stack) |
+| `r`               | resize mode: h/j/k/l, `=` even out, Esc (like `⌥ r`) |
+| `@` / `!`         | pull a pane in from another window / push this pane out |
 | `Ctrl-h/j/k/l`    | move between panes *and nvim splits* (no prefix) |
 | `z`               | zoom pane                                     |
 | `x` / `X`         | kill pane / window                            |
@@ -87,7 +95,7 @@ If a window misses its rule (e.g. it was off-screen at startup), re-run the rule
 | `f`               | fuzzy session picker (zoxide dirs + ~/workspace) |
 | `S`               | session tree · `Tab` last session             |
 | `[`               | copy mode (`v` select, `y` copy to clipboard) |
-| `r`               | reload config                                 |
+| `R`               | reload config                                 |
 | `Ctrl-Space` ×2   | send Ctrl-Space to the app (nvim completion)  |
 | `Ctrl-l`          | clear the shell screen                        |
 
@@ -100,11 +108,19 @@ The VM uses the `linux` branch, which shares this branch's `nvim`, `tmux` and `b
 (see its README for the setup).
 
 ```bash
-coder config-ssh                                         # once: adds <workspace>.coder hosts
-ssh green-sturgeon-38.coder -t tmux new -A -s main       # attach to tmux on the VM
+coder config-ssh     # once: adds <workspace>.coder hosts
+vm                   # VM's tmux in its own iTerm window on workspace O (⌥O)
+vm beige-jay-52      # same for another workspace (default: $CODER_VM, green-sturgeon-38)
 ```
 
-- Open that from an iTerm tab that is **not** inside local tmux, or both tmuxes fight over Ctrl-Space.
+From Spotlight: ⌘Space, type "coder", Enter. That runs `Coder VM.app`, which `./build-apps.sh`
+builds into `~/Applications` (re-run it after changing the script). The first launch asks
+whether "Coder VM" may control iTerm; allow it.
+
+- `vm` runs `ssh <workspace>.coder -t tmux new -A -s main` in a fresh iTerm window, outside
+  local tmux, so the two tmuxes never fight over Ctrl-Space. If workspace O already has a
+  window, `vm` just switches there. Detaching (`Ctrl-Space d`) closes the window; the VM's
+  tmux keeps running.
 - Copying (`y` in tmux copy mode, `y` in nvim) reaches the Mac clipboard over SSH via OSC 52 once
   iTerm → Settings → General → Selection → "Applications in terminal may access clipboard" is on.
 - Web apps on the VM: `coder port-forward green-sturgeon-38 --tcp 8080`.
