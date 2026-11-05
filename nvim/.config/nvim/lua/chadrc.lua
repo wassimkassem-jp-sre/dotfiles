@@ -14,6 +14,15 @@ M.base46 = {
 	-- },
 }
 
+-- Statusline: git branch and +added ~changed -removed counts (from gitsigns)
+-- sit on the right, next to the LSP name, folder and cursor position.
+-- NvChad's default has "git" on the left, right after the file name.
+M.ui = {
+  statusline = {
+    order = { "mode", "file", "%=", "lsp_msg", "%=", "diagnostics", "git", "lsp", "cwd", "cursor" },
+  },
+}
+
 -- M.nvdash = { load_on_startup = true }
 -- M.ui = {
 --       tabufline = {
