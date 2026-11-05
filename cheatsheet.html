@@ -310,6 +310,42 @@
     </section>
 
     <section class="nvim">
+      <h2><span class="tag">nvim</span> Git &amp; GitHub</h2>
+      <h3>lazygit</h3>
+      <table>
+        <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>g</kbd></td><td>lazygit for this repo (<kbd>q</kbd> closes, <kbd>?</kbd> shows keys)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>g</kbd><kbd>f</kbd></td><td>lazygit: history of the current file</td></tr>
+      </table>
+      <h3>Octo (PRs &amp; issues)</h3>
+      <table>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>p</kbd></td><td>List PRs (Enter opens one)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>c</kbd></td><td>Create a PR from this branch</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>r</kbd></td><td>Start or resume a review</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>i</kbd></td><td>List issues</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>s</kbd></td><td>Search (e.g. <code>is:pr review-requested:@me</code>)</td></tr>
+        <tr><td class="k"><kbd>Space</kbd><kbd>o</kbd><kbd>o</kbd></td><td>Pick any Octo command</td></tr>
+      </table>
+      <h3>Inside a PR buffer</h3>
+      <table>
+        <tr><td class="k"><kbd>,</kbd><kbd>c</kbd><kbd>a</kbd> <span class="or">/</span> <kbd>,</kbd><kbd>c</kbd><kbd>r</kbd></td><td>Add comment / reply</td></tr>
+        <tr><td class="k"><kbd>]</kbd><kbd>c</kbd> <span class="or">/</span> <kbd>[</kbd><kbd>c</kbd></td><td>Next / previous comment</td></tr>
+        <tr><td class="k"><kbd>,</kbd><kbd>p</kbd><kbd>o</kbd></td><td>Check out the PR locally</td></tr>
+        <tr><td class="k"><kbd>,</kbd><kbd>p</kbd><kbd>s</kbd><kbd>m</kbd></td><td>Squash and merge</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>b</kbd> <span class="or">/</span> <kbd>⌃</kbd><kbd>y</kbd></td><td>Open in browser / copy URL</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>r</kbd></td><td>Reload</td></tr>
+      </table>
+      <h3>During a review</h3>
+      <table>
+        <tr><td class="k"><kbd>]</kbd><kbd>q</kbd> <span class="or">/</span> <kbd>[</kbd><kbd>q</kbd></td><td>Next / previous changed file</td></tr>
+        <tr><td class="k"><kbd>,</kbd><kbd>c</kbd><kbd>a</kbd> <span class="or">/</span> <kbd>,</kbd><kbd>s</kbd><kbd>a</kbd></td><td>Comment / suggestion on line (works on a visual selection)</td></tr>
+        <tr><td class="k"><kbd>,</kbd><kbd>Space</kbd></td><td>Toggle file viewed</td></tr>
+        <tr><td class="k"><kbd>,</kbd><kbd>v</kbd><kbd>s</kbd> <span class="or">/</span> <kbd>,</kbd><kbd>v</kbd><kbd>d</kbd></td><td>Submit / discard review</td></tr>
+        <tr><td class="k"><kbd>⌃</kbd><kbd>c</kbd></td><td>Close the review tab</td></tr>
+        <tr><td colspan="2" class="note"><kbd>,</kbd> is nvim's local leader. Octo needs <code>gh auth login</code> to work for the repo's GitHub account.</td></tr>
+      </table>
+    </section>
+
+    <section class="nvim">
       <h2><span class="tag">nvim</span> Code</h2>
       <h3>LSP</h3>
       <table>

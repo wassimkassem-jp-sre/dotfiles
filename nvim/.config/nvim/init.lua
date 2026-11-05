@@ -1,5 +1,8 @@
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
+-- Local leader (plugin keys inside special buffers, e.g. Octo's ,ca / ,vs).
+-- The default "\" is awkward on a JIS keyboard.
+vim.g.maplocalleader = ","
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"

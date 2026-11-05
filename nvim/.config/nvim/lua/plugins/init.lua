@@ -21,6 +21,37 @@ return {
       },
     },
   },
+  -- GitHub PRs, reviews and issues inside nvim (talks to GitHub through `gh`,
+  -- so `gh auth login` must work). Everything sits under <leader>o.
+  {
+    "pwntester/octo.nvim",
+    cmd = "Octo",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = { picker = "telescope", enable_builtin = true },
+    keys = {
+      { "<leader>oo", "<cmd>Octo<CR>", desc = "Octo pick a command" },
+      { "<leader>op", "<cmd>Octo pr list<CR>", desc = "Octo list PRs" },
+      { "<leader>oc", "<cmd>Octo pr create<CR>", desc = "Octo create PR from this branch" },
+      { "<leader>or", "<cmd>Octo review<CR>", desc = "Octo start or resume review" },
+      { "<leader>oi", "<cmd>Octo issue list<CR>", desc = "Octo list issues" },
+      { "<leader>os", "<cmd>Octo search<CR>", desc = "Octo search" },
+    },
+  },
+  -- lazygit in a floating window. <leader>gg for the repo, <leader>gf for the
+  -- current file's history.
+  {
+    "kdheepak/lazygit.nvim",
+    cmd = { "LazyGit", "LazyGitCurrentFile", "LazyGitFilterCurrentFile" },
+    dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "<leader>gg", "<cmd>LazyGit<CR>", desc = "lazygit" },
+      { "<leader>gf", "<cmd>LazyGitFilterCurrentFile<CR>", desc = "lazygit current file history" },
+    },
+  },
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save
