@@ -55,6 +55,17 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
 
+# Up/Down search history for commands starting with what's already typed
+# (type "git", press Up to step through earlier git commands; cursor goes to
+# the end). Both escape codes: terminals send either, depending on mode.
+autoload -U up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
+
 # History (same file and size as the Coder VM template's own .zshrc, so the
 # existing history carries over)
 mkdir -p ~/.config/zsh
@@ -84,6 +95,7 @@ export VISUAL=nvim
 # Aliases (t / tf match the macos branch)
 alias ls='ls --color'
 alias vim='nvim'
+alias g=git   # also defined by the OMZP::git snippet; kept here so it never goes missing
 alias c='clear'
 alias t='tmux new-session -A -s main'   # attach to (or create) the "main" session
 alias tf='tmux-sessionizer'             # pick a project, jump to its session
@@ -95,7 +107,11 @@ export TMUX_SESSIONIZER_DIRS="$HOME/workspace $HOME"
 if command -v fzf >/dev/null && fzf --zsh >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
+# zoxide drives cd: `cd foo` jumps to the best match for "foo" (plain paths
+# still work), `cdi` picks with fzf, `z` is the same as cd. (`zi` is zinit's
+# command here, so the picker is only `cdi`.) Same as the macos branch.
 eval "$(zoxide init --cmd cd zsh)"
+alias z=cd
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
