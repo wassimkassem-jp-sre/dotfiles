@@ -50,6 +50,19 @@ unset _openssl
 export EDITOR=nvim
 export VISUAL=nvim
 alias vim=nvim
+alias g=git   # also defined by oh-my-zsh's git plugin; kept here so it never goes missing
+
+# --------------------------------------------------------------- history ----
+# Up/Down search history for commands starting with what's already typed
+# (type "git", press Up to step through earlier git commands). Both escape
+# codes: terminals send either, depending on mode. Same as the linux branch.
+autoload -U up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
 
 # ------------------------------------------------------------------ tmux ----
 # `t` attaches to (or creates) a "main" session; `tf` opens the fuzzy session picker.
@@ -76,10 +89,10 @@ vm() {
   # Open a new iTerm window (this also starts iTerm if it isn't running), then
   # find it by its new window id, not by focus: a just-launched iTerm isn't
   # focused yet, so "the focused window" could be anything.
-  before=$(aerospace list-windows --all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null)
+  before=$(aerospace list-windows --monitor all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null)
   osascript -e "tell application \"iTerm\" to create window with default profile command \"/bin/zsh -lic '_vm_attach $ws'\"" >/dev/null
   for i in {1..50}; do
-    id=$(aerospace list-windows --all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null |
+    id=$(aerospace list-windows --monitor all --app-bundle-id $iterm --format '%{window-id}' 2>/dev/null |
       grep -vxF -f <(print -r -- "$before") | head -1)
     [[ -n $id ]] && break
     sleep 0.2
@@ -101,5 +114,8 @@ _vm_attach() {
 # Machine-specific overrides / secrets, never committed.
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-# zoxide (keep last: it hooks the prompt)
-eval "$(zoxide init zsh)"
+# zoxide drives cd (keep last: it hooks the prompt): `cd foo` jumps to the
+# best match for "foo" (plain paths still work), `cdi` picks with fzf.
+# `z` / `zi` are the same commands, as on the linux branch (where zi is zinit's).
+eval "$(zoxide init --cmd cd zsh)"
+alias z=cd zi=cdi
